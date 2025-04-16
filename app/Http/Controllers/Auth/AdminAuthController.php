@@ -23,7 +23,7 @@ class AdminAuthController extends Controller
 
         if (! $validator->fails()) {
             if (auth()->guard('admin')->attempt(['username' => $request->username, 'password' => $request->password])) {
-                $token = auth()->guard('admin')->user()->createToken('water-system', ['admin']);
+                $token = auth()->guard('admin')->user()->createToken('water-system', ['admin'], now()->addWeek());
 
                 return response(['success' => true, 'data' => [
                     'admin' => auth()->guard('admin')->user(),
@@ -39,6 +39,7 @@ class AdminAuthController extends Controller
 
     public function logout()
     {
+        auth()->user()->tokens()->delete();
         return response()->json(['success' => true]);
     }
 }
