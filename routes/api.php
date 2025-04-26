@@ -19,5 +19,9 @@ Route::group(['prefix' => 'v1'], function () {
 
         // Admin CRUD
         Route::get('/', [AdminController::class, 'index']);
+        Route::post('/', [AdminController::class, 'create']);
+        Route::get('/{id}', [AdminController::class, 'retrieve']);
+        Route::put('/{id}', [AdminController::class, 'update']);
+        Route::delete('/{id}', [AdminController::class, 'delete']);
     });
 });
