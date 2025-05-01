@@ -65,14 +65,13 @@ class AdminController extends Controller
     public function update(Request $request, $id)
     {}
 
-    public function delete($id)
+    public function delete(Request $request)
     {
-        $admin = Admin::find($id)->first();
-        if ($admin && $admin->exists()) {
+        $admins = Admin::findMany($request->admins);
+        $admins->each(function ($admin) {
             $admin->delete();
-            return response()->json(['success' => true, 'message' => 'OK']);
-        } else {
-            return response()->json(['success' => false, 'error' => ['']], 400);
-        }
+        });
+
+        return response()->json(['success' => true, 'message' => 'OK']);
     }
 }
