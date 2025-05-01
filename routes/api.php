@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\Auth\AdminPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,11 +18,17 @@ Route::group(['prefix' => 'v1'], function () {
             })->middleware('auth:sanctum');
         });
 
+        // Password
+        Route::group(['prefix' => 'password'], function () {
+            Route::post('/reset', [AdminPasswordController::class, 'reset']);
+            Route::post('/change', [AdminPasswordController::class, 'change']);
+        });
+
         // Admin CRUD
         Route::get('/', [AdminController::class, 'index']);
         Route::post('/', [AdminController::class, 'create']);
         Route::get('/{id}', [AdminController::class, 'retrieve']);
         Route::put('/{id}', [AdminController::class, 'update']);
-        Route::delete('/{id}', [AdminController::class, 'delete']);
+        Route::delete('/', [AdminController::class, 'delete']);
     });
 });
