@@ -12,12 +12,16 @@ class ServiceController extends Controller
     {
         $this->middleware('auth:sanctum')->except('retrieve');
     }
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $services = Service::all();
+            $search   = $request->get('search');
+            $services = Service::where('name', 'LIKE', '%' . $search . '%')->paginate(30);
 
-            return response()->json(['success' => true, 'data' => $services]);
+            return response()->json(['success' => true, 'data' => [
+                'list'     => $services->items(),
+                'lastPage' => $services->lastPage(),
+            ]]);
         } catch (Exception $error) {
             return $this->throwUnhandledErrorResponse();
         }
