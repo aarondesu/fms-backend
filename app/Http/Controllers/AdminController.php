@@ -16,8 +16,9 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
-        $search = $request->get('search');
-        $admins = Admin::where('username', 'LIKE', '%' . $search . '%')->paginate(30);
+        $search  = $request->get('search');
+        $results = $request->get('results');
+        $admins  = Admin::where('username', 'LIKE', '%' . $search . '%')->paginate($results || 30);
         return response()->json(['success' => true, 'data' => [
             'list'     => $admins->items(),
             'lastPage' => $admins->lastPage(),

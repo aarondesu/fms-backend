@@ -3,7 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Validator;
 
 class ServiceController extends Controller
@@ -16,7 +18,8 @@ class ServiceController extends Controller
     {
         try {
             $search   = $request->get('search');
-            $services = Service::where('name', 'LIKE', '%' . $search . '%')->paginate(30);
+            $results  = $request->get('results');
+            $services = Service::where('name', 'LIKE', '%' . $search . '%')->paginate($results || 30);
 
             return response()->json(['success' => true, 'data' => [
                 'list'     => $services->items(),
@@ -48,10 +51,16 @@ class ServiceController extends Controller
                 return response()->json(['success' => false, 'errors' => $validate->errors()], 400);
             }
 
-        } catch (Exception $error) {
-            return $this->throwUnhandledErrorResponse();
+        } catch (Exception | QueryException $error) {
+            if ($error instanceof QueryException) {
+                Log::error($error->getMessage());
+                return response()->json(['successful' => false, 'errors' => ['Query Error']], 500);
+            } else {
+                return $this->throwUnhandledErrorResponse();
+            }
         }
     }
+
     public function retrieve($id)
     {
         try {
@@ -62,8 +71,13 @@ class ServiceController extends Controller
                 return response()->json(['success' => false, 'errors' => ['Serivce does not exist.']], 400);
             }
 
-        } catch (Exception $error) {
-            return $this->throwUnhandledErrorResponse();
+        } catch (Exception | QueryException $error) {
+            if ($error instanceof QueryException) {
+                Log::error($error->getMessage());
+                return response()->json(['successful' => false, 'errors' => ['Query Error']], 500);
+            } else {
+                return $this->throwUnhandledErrorResponse();
+            }
         }
     }
     public function update(Request $request, $id)
@@ -82,8 +96,13 @@ class ServiceController extends Controller
                 return response()->json(['success' => false, 'errors' => ['Serivce does not exist.']], 400);
             }
 
-        } catch (Exception $error) {
-            return $this->throwUnhandledErrorResponse();
+        } catch (Exception | QueryException $error) {
+            if ($error instanceof QueryException) {
+                Log::error($error->getMessage());
+                return response()->json(['successful' => false, 'errors' => ['Query Error']], 500);
+            } else {
+                return $this->throwUnhandledErrorResponse();
+            }
         }
     }
     public function delete(Request $request, $id)
@@ -98,8 +117,13 @@ class ServiceController extends Controller
                 return response()->json(['success' => false, 'errors' => ['Serivce does not exist.']], 400);
             }
 
-        } catch (Exception $error) {
-            return $this->throwUnhandledErrorResponse();
+        } catch (Exception | QueryException $error) {
+            if ($error instanceof QueryException) {
+                Log::error($error->getMessage());
+                return response()->json(['successful' => false, 'errors' => ['Query Error']], 500);
+            } else {
+                return $this->throwUnhandledErrorResponse();
+            }
         }
     }
 }
